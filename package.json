@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "jquery": "^3.3.1",
-    "three": "^0.99.0"
+    "three": "^0.99.0",
+    "threejs-controls": "^1.0.6"
   }
 }
