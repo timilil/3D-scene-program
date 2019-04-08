@@ -1,0 +1,45 @@
+newmtl Campfire_Maya_2016:phongE3SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd /assets/campfire/camp_diffuse.jpg
+bump /assets/campfire/camp_normal.jpg -bm 1
+Ni 1.00
+Ks 0.12 0.12 0.12
+newmtl phongE1SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd /assets/campfire/rocks_diffuse.jpg
+bump /assets/campfire/rocks_normal.jpg -bm 1
+Ni 1.00
+Ks 0.00 0.00 0.00
+map_Ks /assets/campfire/rocks_specular.jpg
+newmtl phongE3SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd /assets/campfire/woodsground_diffuse.jpg
+bump /assets/campfire/woodsground_normal.jpg -bm 1
+Ni 1.00
+Ks 0.00 0.00 0.00
+map_Ks /assets/campfire/woodsground_specular.jpg
+newmtl phongE4SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd /assets/campfire/utensilrope_diffuse.jpg
+bump /assets/campfire/utensilrope_normal.jpg -bm 1
+Ni 1.00
+Ks 0.00 0.00 0.00
+map_Ks /assets/campfire/utensilrope_specular.jpg
+newmtl useBackground1SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 0.00

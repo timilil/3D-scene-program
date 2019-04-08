@@ -10,12 +10,11 @@ function getHouse(textureWood, textureHay){
     let house = new THREE.Mesh(houseGeometry)
     //house.materialParams = {}
 
-    let material = new THREE.MeshPhongMaterial()
     // roof half
     let geometry = new THREE.BoxGeometry(400, 200, 10)
     //geometry = new THREE.CircleGeometry(600, 10)
     //material = new THREE.MeshBasicMaterial({ color: 0x0000FF})
-    let roof1 = new THREE.Mesh(geometry, material)
+    let roof1 = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial())
     roof1.material.side = THREE.DoubleSide;
     roof1.material.map = textureHay
     roof1.name = "roofHalf1"
@@ -24,16 +23,15 @@ function getHouse(textureWood, textureHay){
     roof1.rotateX(1.0)
 
     // roof other half
-    let roof2 = new THREE.Mesh(geometry, material)
+    let roof2 = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial())
     roof2.material.side = THREE.DoubleSide;
-    roof2.material.map = textureHay
     roof2.name = "roofHalf2"
     roof2.translateY(200)
     roof2.translateZ(90)
     roof2.rotateX(-1.0)
 
     geometry = new THREE.CylinderGeometry( 10, 10, 400, 32 );
-    let roofLog = new THREE.Mesh(geometry, material);
+    let roofLog = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial());
     roofLog.material.map = textureWood
     roofLog.name = "roofLog"
     roofLog.translateY(255)
@@ -45,7 +43,7 @@ function getHouse(textureWood, textureHay){
 
     for(let i=0; i<4; i++) {
         geometry = new THREE.BoxGeometry(10, 160, 10)
-        let pillar = new THREE.Mesh(geometry, material)
+        let pillar = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial())
         pillar.material.map = textureWood
         pillar.name = "housePillar"
         pillar.translateY(80)
@@ -65,6 +63,8 @@ function getHouse(textureWood, textureHay){
         } 
         house.add(pillar)
     }
+    
+    roof2.material.map = textureHay
 
     return house
 }
@@ -102,7 +102,10 @@ export function displayScene(){
         }),
         hay: textureLoader.load('./images/hay.jpg', function(){
             renderer.render(scene, camera)
-        })
+        }),
+        beachball: textureLoader.load('./images/beachball.jpg', function(){
+            renderer.render(scene, camera)
+        }),
     }
 
     let islandRadius = 800
@@ -183,16 +186,88 @@ export function displayScene(){
 
     scene.add(player)
 
+    geometry = new THREE.SphereGeometry(15, 40, 60)
+    //material = new THREE.MeshNormalMaterial({color: 0xFF00FF})
+    let beachball = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial())
+    beachball.material.map = textures.beachball
+    beachball.name = "beachball"
+    beachball.position.set(-30, 15, -150)
+    scene.add(beachball)
+
     let house = getHouse(textures.bamboo,textures.hay)
     house.translateZ(400)
     scene.add(house)
 
     let mtlLoader = new MTLLoader()
     let objLoader = new OBJLoader()
-    mtlLoader.load("./assets/Palm_01.mtl", function(material){
+
+    mtlLoader.load("./assets/sleepingbag/10532_Sleeping_Bag_Unrolled_V1_L3.mtl", function(material){
         material.preload()
         objLoader.setMaterials(material)
-        objLoader.load("./assets/Palm_01.obj", function(object){
+        objLoader.load("./assets/sleepingbag/10532_Sleeping_Bag_Unrolled_V1_L3.obj", function(object){
+
+            let texture = new THREE.TextureLoader().load( './assets/sleepingbag/Sleeping_Bag_Unrolled_V1_SG_Diffuse.jpg' );
+            let material = new THREE.MeshBasicMaterial( { map: texture } );
+            
+            for(let o of object.children){
+                o.material = material
+            }
+            
+            object.position.set(100, 0, 400)
+            object.rotateX(-Math.PI/2)
+            object.scale.set(1, 1, 1)
+            scene.add(object)
+            
+            renderer.render(scene, camera)
+        })
+    })
+
+    mtlLoader.load("./assets/beachumbrella/12984_beach_umbrella_v1_L2.mtl", function(material){
+        material.preload()
+        objLoader.setMaterials(material)
+        objLoader.load("./assets/beachumbrella/12984_beach_umbrella_v1_L2.obj", function(object){
+
+            let texture = new THREE.TextureLoader().load( './assets/beachumbrella/12984_beach-umbrella_diffuse.jpg' );
+            let material = new THREE.MeshBasicMaterial( { map: texture } );
+            
+            for(let o of object.children){
+                o.material = material
+            }
+            
+            object.position.set(-400, 0, 400)
+            object.rotateX(-Math.PI/2)
+            object.scale.set(1.5, 1.5, 1.5)
+            scene.add(object)
+            
+            renderer.render(scene, camera)
+        })
+    })
+
+    mtlLoader.load("./assets/beachtowels/13519_Beach_Towels_v2_L2.mtl", function(material){
+        material.preload()
+        objLoader.setMaterials(material)
+        objLoader.load("./assets/beachtowels/13519_Beach_Towels_v2_L2.obj", function(object){
+
+            let texture = new THREE.TextureLoader().load( './assets/beachtowels/Beach_Towels_diffuse.jpg' );
+            let material = new THREE.MeshBasicMaterial( { map: texture } );
+            
+            for(let o of object.children){
+                o.material = material
+            }
+            
+            object.position.set(-410, 0, 400)
+            object.rotateX(-Math.PI/2)
+            object.scale.set(1, 1, 1)
+            scene.add(object)
+            
+            renderer.render(scene, camera)
+        })
+    })
+
+    mtlLoader.load("./assets/palm/Palm_01.mtl", function(material){
+        material.preload()
+        objLoader.setMaterials(material)
+        objLoader.load("./assets/palm/Palm_01.obj", function(object){
 
             //let texture = new THREE.TextureLoader().load( './assets/VL1X8_002.png' );
             //let material = new THREE.MeshBasicMaterial( { map: texture } );
@@ -206,7 +281,7 @@ export function displayScene(){
                 //o.material = material
             }
             
-            object.position.set(400, 0, 100)
+            object.position.set(-300, 0, -300)
             object.scale.set(8, 8, 8)
             scene.add(object)
             
@@ -231,10 +306,10 @@ export function displayScene(){
         })
     })
 
-    mtlLoader.load("./assets/Tree.mtl", function(material){
+    mtlLoader.load("./assets/tree/Tree.mtl", function(material){
         material.preload()
         objLoader.setMaterials(material)
-        objLoader.load("./assets/Tree.obj", function(object){
+        objLoader.load("./assets/tree/Tree.obj", function(object){
              
             let i = 0
             for(let o of object.children){
@@ -258,6 +333,66 @@ export function displayScene(){
             scene.add(object)
 
             renderer.render(scene, camera)
+        })
+    })
+
+    objLoader.load("./assets/treestump/tree.obj", function(object){
+
+        let texture = new THREE.TextureLoader().load( './assets/treestump/w3.jpg' );
+        let material = new THREE.MeshBasicMaterial( { map: texture } );
+            
+        for(let o of object.children){
+            o.material = material
+        }
+        
+        object.position.set(-600, 28, -200)
+        object.scale.set(10, 10, 10)
+        scene.add(object)
+
+        renderer.render(scene, camera)
+    })
+
+    mtlLoader.load("./assets/axe/12351_Axe_v3_l3.mtl", function(material){
+        material.preload()
+        objLoader.setMaterials(material)
+        objLoader.load("./assets/axe/12351_Axe_v3_l3.obj", function(object){
+             
+            let texture = new THREE.TextureLoader().load( './assets/axe/Axe_diffuse.jpg' );
+            let material = new THREE.MeshBasicMaterial( { map: texture } );
+            
+            for(let o of object.children){
+                o.material = material
+            }
+            
+            object.position.set(-565, 45, -200)
+            object.rotateX(-1.5)
+            object.rotateY(-0.8)
+            object.scale.set(3, 3, 3)
+            scene.add(object)
+
+            renderer.render(scene, camera)
+            
+        })
+    })
+
+    mtlLoader.load("./assets/treelogs/Logs.mtl", function(material){
+        material.preload()
+        objLoader.setMaterials(material)
+        objLoader.load("./assets/treelogs/Logs.obj", function(object){
+             
+            let texture = new THREE.TextureLoader().load( './assets/treestump/w3.jpg' );
+            let material = new THREE.MeshBasicMaterial( { map: texture } );
+            
+            for(let o of object.children){
+                o.material = material
+            }
+            
+            object.position.set(-600, 0, -100)
+            object.scale.set(.5, 2, 2)
+            scene.add(object)
+
+            renderer.render(scene, camera)
+            
         })
     })
 
@@ -311,6 +446,54 @@ export function displayScene(){
             object.position.set(650, -10, 400)
             object.scale.set(40, 40, 40)
             object.rotateY(-2)
+            scene.add(object)
+
+            renderer.render(scene, camera)
+        })
+    })
+
+    mtlLoader.load("./assets/campfire/Campfire OBJ.mtl", function(material){
+        material.preload()
+        objLoader.setMaterials(material)
+        objLoader.load("./assets/campfire/Campfire OBJ.obj", function(object){
+             
+            let i = 0
+            // remove unnecessary object
+            object.remove(object.children[0])
+            for(let o of object.children){
+                if (i === 0) {
+                    let texture = new THREE.TextureLoader().load( './images/army.jpg' );
+                    let material = new THREE.MeshBasicMaterial( { map: texture } );
+                    o.material = material
+                    o.material.side = THREE.DoubleSide
+                } else if (i === 1 || i === 2 || i === 3 || i === 4){
+                    let c = new THREE.Color(0x191919)
+                    o.material = new THREE.MeshPhongMaterial({
+                        color: c,
+                    })
+                } else if (i === 5){
+                    let texture = new THREE.TextureLoader().load( './assets/campfire/woodsground_diffuse.jpg' );
+                    let material = new THREE.MeshBasicMaterial( { map: texture } );
+                    o.material = material/*new THREE.MeshPhongMaterial({
+                        color: c,
+                        side: THREE.DoubleSide
+                    })*/
+                } else if (i === 6){
+                    let texture = new THREE.TextureLoader().load( './images/rock1.jpg' );
+                    let material = new THREE.MeshBasicMaterial( { map: texture } );
+                    o.material = material
+                } else if (i === 7){
+                    //let c = new THREE.Color(0x2b1d0e)
+                    let texture = new THREE.TextureLoader().load( './images/metal.jpg' );
+                    let material = new THREE.MeshBasicMaterial( { map: texture } );
+                    o.material = material
+                } 
+                i++
+            }
+            
+            object.position.set(500, 0, -100)
+            object.rotateY(-.5)
+            object.scale.set(8, 8, 8)
             scene.add(object)
 
             renderer.render(scene, camera)
