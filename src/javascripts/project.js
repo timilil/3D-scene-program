@@ -1,72 +1,33 @@
 import * as THREE from 'three'
 window.THREE = THREE
-import { MTLLoader, OBJLoader } from 'three-obj-mtl-loader'
 let OrbitControls = require('threejs-controls/OrbitControls')
 
-function getHouse(textureWood, textureHay){
-    
-    let houseGeometry = new THREE.Geometry();
-    houseGeometry.materialParams = {}
-    let house = new THREE.Mesh(houseGeometry)
-    //house.materialParams = {}
+import {getBoat} from './objects/boat'
+import {getHouse} from './objects/house'
+import {getBeachUmbrella} from './objects/beachumbrella'
+import {getBeachTowels} from './objects/beachtowels'
+import {getSleepingBag} from './objects/sleepingbag'
+import {getAxe} from './objects/axe'
+import {getLogs} from './objects/logs'
+import {getTree} from './objects/tree'
+import {getTreeStump} from './objects/treestump'
+import {getPalm} from './objects/palm'
+import {getPalmTree} from './objects/palmtree'
+import {getCampfire} from './objects/campfire'
+import {getPerson} from './objects/person'
+import {getChair} from './objects/chair'
+import {getTable} from './objects/table'
 
-    // roof half
-    let geometry = new THREE.BoxGeometry(400, 200, 10)
-    //geometry = new THREE.CircleGeometry(600, 10)
-    //material = new THREE.MeshBasicMaterial({ color: 0x0000FF})
-    let roof1 = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial())
-    roof1.material.side = THREE.DoubleSide;
-    roof1.material.map = textureHay
-    roof1.name = "roofHalf1"
-    roof1.translateY(200)
-    roof1.translateZ(-90)
-    roof1.rotateX(1.0)
-
-    // roof other half
-    let roof2 = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial())
-    roof2.material.side = THREE.DoubleSide;
-    roof2.name = "roofHalf2"
-    roof2.translateY(200)
-    roof2.translateZ(90)
-    roof2.rotateX(-1.0)
-
-    geometry = new THREE.CylinderGeometry( 10, 10, 400, 32 );
-    let roofLog = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial());
-    roofLog.material.map = textureWood
-    roofLog.name = "roofLog"
-    roofLog.translateY(255)
-    roofLog.rotateZ(Math.PI/2)
-    
-    house.add(roof1)
-    house.add(roof2)
-    house.add(roofLog)
-
-    for(let i=0; i<4; i++) {
-        geometry = new THREE.BoxGeometry(10, 160, 10)
-        let pillar = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial())
-        pillar.material.map = textureWood
-        pillar.name = "housePillar"
-        pillar.translateY(80)
-        
-        if(i==0){
-            pillar.translateX(-180)
-            pillar.translateZ(-150)
-        } else if(i==1) {
-            pillar.translateX(180)
-            pillar.translateZ(-150)
-        } else if(i==2) {
-            pillar.translateX(-180)
-            pillar.translateZ(150)
-        } else if(i==3) {
-            pillar.translateX(180)
-            pillar.translateZ(150)
-        } 
-        house.add(pillar)
-    }
-    
-    roof2.material.map = textureHay
-
-    return house
+function isNextMoveInsideIslandBoundary(player, island, islandRadius, nextMove){
+    // check that the movable object is inside the island boundary
+    if((Math.pow(((player.position.x +nextMove) - island.position.x), 2) + Math.pow((player.position.z - island.position.z), 2)) < Math.pow(islandRadius, 2)){
+        return true
+    } /*else {
+        if((Math.pow(((player.position.x +(nextMove*5)) - island.position.x), 2) + Math.pow((player.position.z - island.position.z), 2)) < Math.pow(islandRadius, 2)){
+            return true
+        }
+    }*/
+    return false
 }
 
 export function displayScene(){
@@ -198,307 +159,20 @@ export function displayScene(){
     house.translateZ(400)
     scene.add(house)
 
-    let mtlLoader = new MTLLoader()
-    let objLoader = new OBJLoader()
-
-    mtlLoader.load("./assets/sleepingbag/10532_Sleeping_Bag_Unrolled_V1_L3.mtl", function(material){
-        material.preload()
-        objLoader.setMaterials(material)
-        objLoader.load("./assets/sleepingbag/10532_Sleeping_Bag_Unrolled_V1_L3.obj", function(object){
-
-            let texture = new THREE.TextureLoader().load( './assets/sleepingbag/Sleeping_Bag_Unrolled_V1_SG_Diffuse.jpg' );
-            let material = new THREE.MeshBasicMaterial( { map: texture } );
-            
-            for(let o of object.children){
-                o.material = material
-            }
-            
-            object.position.set(100, 0, 400)
-            object.rotateX(-Math.PI/2)
-            object.scale.set(1, 1, 1)
-            scene.add(object)
-            
-            renderer.render(scene, camera)
-        })
-    })
-
-    mtlLoader.load("./assets/beachumbrella/12984_beach_umbrella_v1_L2.mtl", function(material){
-        material.preload()
-        objLoader.setMaterials(material)
-        objLoader.load("./assets/beachumbrella/12984_beach_umbrella_v1_L2.obj", function(object){
-
-            let texture = new THREE.TextureLoader().load( './assets/beachumbrella/12984_beach-umbrella_diffuse.jpg' );
-            let material = new THREE.MeshBasicMaterial( { map: texture } );
-            
-            for(let o of object.children){
-                o.material = material
-            }
-            
-            object.position.set(-400, 0, 400)
-            object.rotateX(-Math.PI/2)
-            object.scale.set(1.5, 1.5, 1.5)
-            scene.add(object)
-            
-            renderer.render(scene, camera)
-        })
-    })
-
-    mtlLoader.load("./assets/beachtowels/13519_Beach_Towels_v2_L2.mtl", function(material){
-        material.preload()
-        objLoader.setMaterials(material)
-        objLoader.load("./assets/beachtowels/13519_Beach_Towels_v2_L2.obj", function(object){
-
-            let texture = new THREE.TextureLoader().load( './assets/beachtowels/Beach_Towels_diffuse.jpg' );
-            let material = new THREE.MeshBasicMaterial( { map: texture } );
-            
-            for(let o of object.children){
-                o.material = material
-            }
-            
-            object.position.set(-410, 0, 400)
-            object.rotateX(-Math.PI/2)
-            object.scale.set(1, 1, 1)
-            scene.add(object)
-            
-            renderer.render(scene, camera)
-        })
-    })
-
-    mtlLoader.load("./assets/palm/Palm_01.mtl", function(material){
-        material.preload()
-        objLoader.setMaterials(material)
-        objLoader.load("./assets/palm/Palm_01.obj", function(object){
-
-            //let texture = new THREE.TextureLoader().load( './assets/VL1X8_002.png' );
-            //let material = new THREE.MeshBasicMaterial( { map: texture } );
-             
-            for(let o of object.children){
-                let c = new THREE.Color()
-                c.setHex(0x00FF00)
-                o.material = new THREE.MeshPhongMaterial({
-                    color: c
-                })
-                //o.material = material
-            }
-            
-            object.position.set(-300, 0, -300)
-            object.scale.set(8, 8, 8)
-            scene.add(object)
-            
-            // generate n amount of objects inside a circle
-            /*let cx = 400;
-            let cz = 100;
-            let radius = 100
-            let objectCount = 10
-            for (let i=0; i<objectCount; i++){
-                
-                let angle = Math.random()*Math.PI*2;
-                
-                let x = cx + Math.cos(angle)*radius;
-                let z = cz+ Math.sin(angle)*radius;
-                
-                object.position.set(x,0,z)
-                object.scale.set(8, 8, 8)
-                scene.add(object)
-            }*/
-
-            renderer.render(scene, camera)
-        })
-    })
-
-    mtlLoader.load("./assets/tree/Tree.mtl", function(material){
-        material.preload()
-        objLoader.setMaterials(material)
-        objLoader.load("./assets/tree/Tree.obj", function(object){
-             
-            let i = 0
-            for(let o of object.children){
-                let c = new THREE.Color()
-                // this tree has only two objects, the trunk and the leaves
-                if (i===0){
-                    // brown
-                    c.setHex(0xA52A2A)
-                } else {
-                    // green
-                    c.setHex(0x00FF00)
-                }
-                o.material = new THREE.MeshPhongMaterial({
-                    color: c
-                })
-                i++
-            }
-            
-            object.position.set(-400, 0, -400)
-            object.scale.set(100, 100, 100)
-            scene.add(object)
-
-            renderer.render(scene, camera)
-        })
-    })
-
-    objLoader.load("./assets/treestump/tree.obj", function(object){
-
-        let texture = new THREE.TextureLoader().load( './assets/treestump/w3.jpg' );
-        let material = new THREE.MeshBasicMaterial( { map: texture } );
-            
-        for(let o of object.children){
-            o.material = material
-        }
-        
-        object.position.set(-600, 28, -200)
-        object.scale.set(10, 10, 10)
-        scene.add(object)
-
-        renderer.render(scene, camera)
-    })
-
-    mtlLoader.load("./assets/axe/12351_Axe_v3_l3.mtl", function(material){
-        material.preload()
-        objLoader.setMaterials(material)
-        objLoader.load("./assets/axe/12351_Axe_v3_l3.obj", function(object){
-             
-            let texture = new THREE.TextureLoader().load( './assets/axe/Axe_diffuse.jpg' );
-            let material = new THREE.MeshBasicMaterial( { map: texture } );
-            
-            for(let o of object.children){
-                o.material = material
-            }
-            
-            object.position.set(-565, 45, -200)
-            object.rotateX(-1.5)
-            object.rotateY(-0.8)
-            object.scale.set(3, 3, 3)
-            scene.add(object)
-
-            renderer.render(scene, camera)
-            
-        })
-    })
-
-    mtlLoader.load("./assets/treelogs/Logs.mtl", function(material){
-        material.preload()
-        objLoader.setMaterials(material)
-        objLoader.load("./assets/treelogs/Logs.obj", function(object){
-             
-            let texture = new THREE.TextureLoader().load( './assets/treestump/w3.jpg' );
-            let material = new THREE.MeshBasicMaterial( { map: texture } );
-            
-            for(let o of object.children){
-                o.material = material
-            }
-            
-            object.position.set(-600, 0, -100)
-            object.scale.set(.5, 2, 2)
-            scene.add(object)
-
-            renderer.render(scene, camera)
-            
-        })
-    })
-
-    mtlLoader.load("./assets/palmtree/10446_Palm_Tree_v1_max2010_iteration-2.mtl", function(material){
-        material.preload()
-        objLoader.setMaterials(material)
-        objLoader.load("./assets/palmtree/10446_Palm_Tree_v1_max2010_iteration-2.obj", function(object){
-             
-            new THREE.TextureLoader().load('./assets/palmtree/10446_Palm_Tree_v1_Diffuse.jpg', function(texture){
-                let material = new THREE.MeshBasicMaterial( { map: texture } );
-             
-                for(let o of object.children){
-                    o.material = material
-                }
-                
-                object.position.set(100, 0, -400)
-                object.scale.set(.5, .5, .5)
-                object.rotateX(-(Math.PI/2))
-                scene.add(object)
-
-                renderer.render(scene, camera)
-            });
-            
-        })
-    })
-
-    mtlLoader.load("./assets/boat/boat.mtl", function(material){
-        material.preload()
-        objLoader.setMaterials(material)
-        objLoader.load("./assets/boat/boat.obj", function(object){
-             
-            let i = 0
-            for(let o of object.children){
-                let c = new THREE.Color(0xFFFFFF)
-                if(i===0) {
-                    c.setHex(0xD3D3D3)
-                } else {
-                    c.setHex(0x654321)
-                    o.rotateY(1.7)
-                    o.translateX(-3)
-                    o.translateY(-.15)
-                    o.translateZ(-4.2)
-                    o.rotateZ(.36)
-                }
-                o.material = new THREE.MeshLambertMaterial({
-                    color: c
-                })
-                i++
-            }
-            
-            object.position.set(650, -10, 400)
-            object.scale.set(40, 40, 40)
-            object.rotateY(-2)
-            scene.add(object)
-
-            renderer.render(scene, camera)
-        })
-    })
-
-    mtlLoader.load("./assets/campfire/Campfire OBJ.mtl", function(material){
-        material.preload()
-        objLoader.setMaterials(material)
-        objLoader.load("./assets/campfire/Campfire OBJ.obj", function(object){
-             
-            let i = 0
-            // remove unnecessary object
-            object.remove(object.children[0])
-            for(let o of object.children){
-                if (i === 0) {
-                    let texture = new THREE.TextureLoader().load( './images/army.jpg' );
-                    let material = new THREE.MeshBasicMaterial( { map: texture } );
-                    o.material = material
-                    o.material.side = THREE.DoubleSide
-                } else if (i === 1 || i === 2 || i === 3 || i === 4){
-                    let c = new THREE.Color(0x191919)
-                    o.material = new THREE.MeshPhongMaterial({
-                        color: c,
-                    })
-                } else if (i === 5){
-                    let texture = new THREE.TextureLoader().load( './assets/campfire/woodsground_diffuse.jpg' );
-                    let material = new THREE.MeshBasicMaterial( { map: texture } );
-                    o.material = material/*new THREE.MeshPhongMaterial({
-                        color: c,
-                        side: THREE.DoubleSide
-                    })*/
-                } else if (i === 6){
-                    let texture = new THREE.TextureLoader().load( './images/rock1.jpg' );
-                    let material = new THREE.MeshBasicMaterial( { map: texture } );
-                    o.material = material
-                } else if (i === 7){
-                    //let c = new THREE.Color(0x2b1d0e)
-                    let texture = new THREE.TextureLoader().load( './images/metal.jpg' );
-                    let material = new THREE.MeshBasicMaterial( { map: texture } );
-                    o.material = material
-                } 
-                i++
-            }
-            
-            object.position.set(500, 0, -100)
-            object.rotateY(-.5)
-            object.scale.set(8, 8, 8)
-            scene.add(object)
-
-            renderer.render(scene, camera)
-        })
-    })
+    getBoat(scene, renderer, camera)
+    getBeachTowels(scene, renderer, camera)
+    getBeachUmbrella(scene, renderer, camera)
+    getSleepingBag(scene, renderer, camera)
+    getPalm(scene, renderer, camera)
+    getTree(scene, renderer, camera)
+    getTreeStump(scene, renderer, camera)
+    getAxe(scene, renderer, camera)
+    getLogs(scene, renderer, camera)
+    getPalmTree(scene, renderer, camera)
+    getCampfire(scene, renderer, camera)
+    getPerson(scene, renderer, camera)
+    getChair(scene, renderer, camera)
+    getTable(scene, renderer, camera)
 
     // add scene to html page
     canvas.appendChild(renderer.domElement)
@@ -535,8 +209,6 @@ export function displayScene(){
 
     }
 
-    let lastMove = null
-    let insideBoundary = true
     let walkSpeed = 5
     let legRotation1 = 0.05
     let legRotation2 = -0.05
@@ -545,18 +217,13 @@ export function displayScene(){
         //console.log(e.keyCode)
         switch(e.keyCode){
             case 87: 
-                if (!insideBoundary && lastMove === "forward") {
-                    player.translateX(0)
-                } else {
-                    console.log("move forward")
-                    lastMove = "forward"
+                if (isNextMoveInsideIslandBoundary(player, island, islandRadius, walkSpeed)) {
                     /*if (counter === 10) {
                         legRotation1 = -legRotation1
                         legRotation2 = -legRotation2
                         counter = 0
                     }
                     counter++
-                    
                     playerLeftLeg.rotateZ(legRotation1)
                     playerRightLeg.rotateZ(legRotation2)*/
                     player.translateX(walkSpeed)
@@ -566,11 +233,7 @@ export function displayScene(){
                 } 
                 break
             case 83: 
-                if (!insideBoundary && lastMove === "backward") {
-                    player.translateX(0)
-                } else {
-                    console.log("move backwards")
-                    lastMove = "backward"
+                if (isNextMoveInsideIslandBoundary(player, island, islandRadius, -walkSpeed)) {
                     /*if (counter === 10) {
                         legRotation1 = -legRotation1
                         legRotation2 = -legRotation2
@@ -588,35 +251,16 @@ export function displayScene(){
                 } 
                 break
             case 65: 
-                if (!insideBoundary && lastMove === "left") {
-                    player.translateZ(0)
-                } else {
-                    console.log("move left")
-                    lastMove = "left"
-                    // these 2 lines will make the player move to the correct direction after rotating
-                    player.rotateY(2)
-                    player.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), -(Math.PI/2))
-                }
+                // these 2 lines will make the player move to the correct direction after rotating
+                player.rotateY(2)
+                player.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), -(Math.PI/2))
                 break
             case 68: 
-                if (!insideBoundary && lastMove === "right") {
-                    player.translateZ(0)
-                } else {
-                    console.log("move right")
-                    lastMove = "right"
-                    player.rotateY(-2)
-                    player.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), Math.PI/2)
-                }
+                player.rotateY(-2)
+                player.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), Math.PI/2)
                 break
         }
         renderer.render(scene, camera) 
-
-        // check that the movable object is inside the island boundary
-        if((Math.pow((player.position.x - island.position.x), 2) + Math.pow((player.position.z - island.position.z), 2)) < Math.pow(islandRadius, 2)){
-            insideBoundary = true
-        } else {
-            insideBoundary = false
-        }
     }
 
     function animate(){
