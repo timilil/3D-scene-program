@@ -8,8 +8,6 @@ export function getHouse(textureWood, textureHay){
 
     // roof half
     let geometry = new THREE.BoxGeometry(400, 200, 10)
-    //geometry = new THREE.CircleGeometry(600, 10)
-    //material = new THREE.MeshBasicMaterial({ color: 0x0000FF})
     let roof1 = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial())
     roof1.material.side = THREE.DoubleSide;
     roof1.material.map = textureHay

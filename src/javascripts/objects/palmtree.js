@@ -20,7 +20,21 @@ export function getPalmTree(scene, renderer, camera){
                 object.position.set(100, 0, -400)
                 object.scale.set(.5, .5, .5)
                 object.rotateX(-(Math.PI/2))
+                object.name = "palmtree"
                 scene.add(object)
+
+                let clonedObject = object.clone()
+                clonedObject.position.set(-300, 0, 300)
+                clonedObject.scale.set(.5, .5, .5)
+                clonedObject.name = "palmtree"
+                scene.add(clonedObject)
+
+                let clonedObject2 = object.clone()
+                clonedObject2.position.set(-500, 0, 200)
+                clonedObject2.scale.set(.4, .4, .4)
+                clonedObject2.name = "palmtree"
+                scene.add(clonedObject2)
+
                 renderer.render(scene, camera)
             });
         })

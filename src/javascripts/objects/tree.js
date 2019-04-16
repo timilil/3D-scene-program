@@ -28,6 +28,7 @@ export function getTree(scene, renderer, camera){
             
             object.position.set(-400, 0, -400)
             object.scale.set(100, 100, 100)
+            object.name = "tree"
             scene.add(object)
             renderer.render(scene, camera)
         })

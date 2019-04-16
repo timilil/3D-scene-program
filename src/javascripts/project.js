@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { MTLLoader, OBJLoader } from 'three-obj-mtl-loader'
 window.THREE = THREE
 let OrbitControls = require('threejs-controls/OrbitControls')
 
@@ -17,16 +18,46 @@ import {getCampfire} from './objects/campfire'
 import {getPerson} from './objects/person'
 import {getChair} from './objects/chair'
 import {getTable} from './objects/table'
+import {getDrone} from './objects/drone'
+import {getGrass} from './objects/grass'
+import {getDog} from './objects/dog'
 
+// check that the movable object is inside the island boundary
 function isNextMoveInsideIslandBoundary(player, island, islandRadius, nextMove){
-    // check that the movable object is inside the island boundary
-    if((Math.pow(((player.position.x +nextMove) - island.position.x), 2) + Math.pow((player.position.z - island.position.z), 2)) < Math.pow(islandRadius, 2)){
+    if((Math.pow(((player.position.x-nextMove) - island.position.x), 2) + Math.pow(((player.position.z) - island.position.z), 2)) < Math.pow(islandRadius, 2)){
         return true
-    } /*else {
-        if((Math.pow(((player.position.x +(nextMove*5)) - island.position.x), 2) + Math.pow((player.position.z - island.position.z), 2)) < Math.pow(islandRadius, 2)){
+    } 
+    return false
+}
+
+// check that the movable object is not intersecting other objects on the island
+function isObjectIntersecting(scene, camera, player) {
+    
+    let raycaster = new THREE.Raycaster()
+    let playerLocation = new THREE.Vector2()
+    
+    let intersectObjects = []
+    for(let intersectChild of scene.children){
+        if(intersectChild.children.length > 0) {
+            for (let child of intersectChild.children){
+                intersectObjects.push(child)
+            }
+        } else {
+            intersectObjects.push(intersectChild)
+        }
+    }
+    
+    // x and y values because the player's car has been rotated and x is no longer in use
+    playerLocation.z = player.position.z
+    playerLocation.y = player.position.y
+    raycaster.setFromCamera(playerLocation, camera)
+    let intersects = raycaster.intersectObjects(intersectObjects)
+    
+    for(let intersect of intersects){
+        if(intersect.object.name !== "water" && intersect.object.name !== "sand" && intersect.object.name !== "sky" && intersect.object.name !== "10438_Circular_Grass_Patch_v1"  && intersect.object.name !== "Mesh_0020"){
             return true
         }
-    }*/
+    }
     return false
 }
 
@@ -35,27 +66,17 @@ export function displayScene(){
     let scene = new THREE.Scene()
     let renderer = new THREE.WebGLRenderer()
     // parameters for PerspectiveCamera: angle, ratio, near (how near we start to see), far (how far can we see)
-    let camera = new THREE.PerspectiveCamera(45, canvas.clientWidth/canvas.clientHeight, .1, 5000)
+    let camera = new THREE.PerspectiveCamera(45, canvas.clientWidth/canvas.clientHeight, .1, 7000)
     
     renderer.setSize(canvas.clientWidth, canvas.clientHeight)
     renderer.setClearColor(0xEEEEEE)
-
-    // display x, y and z axes
-    let axes = new THREE.AxesHelper(100)
-    scene.add(axes)
 
     let textureLoader = new THREE.TextureLoader()
     let textures = {
         water: textureLoader.load('./images/water.jpg', function(){
             renderer.render(scene, camera)
         }),
-        sand: textureLoader.load('./images/Sand2.jpg', function(texture){
-            /*texture.wrapS = THREE.RepeatWrapping
-            texture.wrapT = THREE.RepeatWrapping
-            texture.repeat.set(1, 1)*/
-            renderer.render(scene, camera)
-        }),
-        playerHead: textureLoader.load('./images/male_face.png', function(){
+        sand: textureLoader.load('./images/Sand2.jpg', function(){
             renderer.render(scene, camera)
         }),
         bamboo: textureLoader.load('./images/bamboo.jpg', function(){
@@ -67,12 +88,17 @@ export function displayScene(){
         beachball: textureLoader.load('./images/beachball.jpg', function(){
             renderer.render(scene, camera)
         }),
+        sky: textureLoader.load('./images/sky.jpg', function(texture){
+            texture.wrapS = THREE.RepeatWrapping
+            texture.wrapT = THREE.RepeatWrapping
+            texture.repeat.set(6, 1)
+            renderer.render(scene, camera)
+        }),
     }
 
     let islandRadius = 800
 
     // island
-    //let geometry = new THREE.PlaneGeometry(700, 700, 20, 10)
     let geometry = new THREE.CircleGeometry(islandRadius, 10)
     let island = new THREE.Mesh(geometry)
     island.materialParams = {}
@@ -82,8 +108,6 @@ export function displayScene(){
 
     // water
     geometry = new THREE.PlaneGeometry(15000, 15000, 20, 10)
-    //geometry = new THREE.CircleGeometry(600, 10)
-    //material = new THREE.MeshBasicMaterial({ color: 0x0000FF})
     let water = new THREE.Mesh(geometry)
     water.materialParams = {}
     water.name = "water"
@@ -91,64 +115,14 @@ export function displayScene(){
     water.rotateX(-(Math.PI / 2))
     scene.add(water)
 
-    geometry = new THREE.BoxGeometry(10, 40, 10)
-    let playerLeftLeg = new THREE.Mesh(geometry)
-    //let material = new THREE.MeshBasicMaterial({ color: 0x0000FF})
-    playerLeftLeg.materialParams = {color: 0x00FF00}
-    playerLeftLeg.position.set(0, 20, -10)
-    playerLeftLeg.name = "playerLeftLeg"
-    //scene.add(playerLeftLeg)
-
-    geometry = new THREE.BoxGeometry(10, 40, 10)
-    let playerRightLeg = new THREE.Mesh(geometry)
-    playerRightLeg.materialParams = {}
-    playerRightLeg.position.set(0, 20, 10)
-    playerRightLeg.name = "playerRightLeg"
-
-    geometry = new THREE.BoxGeometry(20, 50, 30)
-    let playerTorso = new THREE.Mesh(geometry)
-    playerTorso.materialParams = {}
-    playerTorso.position.set(0, 65, 0)
-    playerTorso.name = "playerTorso"
-
-    geometry = new THREE.BoxGeometry(10, 35, 10)
-    let playerLeftArm = new THREE.Mesh(geometry)
-    playerLeftArm.materialParams = {}
-    playerLeftArm.rotateX(10)
-    playerLeftArm.position.set(0, 72, -20)
-    playerLeftArm.name = "playerLeftArm"
-
-    geometry = new THREE.BoxGeometry(10, 35, 10)
-    let playerRightArm = new THREE.Mesh(geometry)
-    playerRightArm.materialParams = {}
-    playerRightArm.rotateX(-10)
-    playerRightArm.position.set(0, 72, 20)
-    playerRightArm.name = "playerRightArm"
-
-    geometry = new THREE.SphereGeometry(15, 30, 30)
-    let playerHead = new THREE.Mesh(geometry)
-    playerHead.materialParams = {}
-    playerHead.position.set(0, 104, 0)
-    playerHead.material = new THREE.MeshPhongMaterial(playerHead.materialParams)
-    playerHead.material.map = textures.playerHead
-    playerHead.name = "playerHead"
-    
-    let playerGeometry = new THREE.Geometry();
-    playerGeometry.materialParams = {}
-    
-    let player = new THREE.Mesh(playerGeometry)
-    //player.materialParams = {}
-    player.add(playerHead)
-    player.add(playerTorso)
-    player.add(playerLeftArm)
-    player.add(playerRightArm)
-    player.add(playerLeftLeg)
-    player.add(playerRightLeg)
-
-    scene.add(player)
+    // sky
+    geometry = new THREE.SphereGeometry(5000, 25, 25, 0, 2*Math.PI, 0, 0.5 * Math.PI,)
+    let sky = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial())
+    sky.material.side = THREE.BackSide;
+    sky.name = "sky"
+    scene.add(sky)
 
     geometry = new THREE.SphereGeometry(15, 40, 60)
-    //material = new THREE.MeshNormalMaterial({color: 0xFF00FF})
     let beachball = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial())
     beachball.material.map = textures.beachball
     beachball.name = "beachball"
@@ -173,6 +147,54 @@ export function displayScene(){
     getPerson(scene, renderer, camera)
     getChair(scene, renderer, camera)
     getTable(scene, renderer, camera)
+    getDrone(scene, renderer, camera)
+    getGrass(scene, renderer, camera)
+    getDog(scene, renderer, camera)
+
+    let mtlLoader = new MTLLoader()
+    let objLoader = new OBJLoader()
+
+    let player = null
+    mtlLoader.load("./assets/cardriver/baby.mtl", function(material1){
+        material1.preload()
+        objLoader.setMaterials(material1)
+        objLoader.load("./assets/cardriver/baby.obj", function(objectPerson){
+
+            let texture1 = new THREE.TextureLoader().load( './assets/cardriver/SittingBabyDiffuseMap.jpg' );
+            let materialPerson = new THREE.MeshBasicMaterial( { map: texture1 } );
+            
+            for(let o of objectPerson.children){
+                o.material = materialPerson
+            }
+            
+            objectPerson.position.set(-35, 50, -10)
+            objectPerson.scale.set(3, 3, 3)
+            objectPerson.rotateX(Math.PI/2)
+            objectPerson.rotateY(Math.PI)
+
+            mtlLoader.load("./assets/car/dpv.mtl", function(material2){
+                material2.preload()
+                objLoader.setMaterials(material2)
+                objLoader.load("./assets/car/dpv.obj", function(objectCar){
+
+                    let texture2 = new THREE.TextureLoader().load( './assets/car/Tex_0025_1.png' );
+                    let materialCar = new THREE.MeshBasicMaterial( { map: texture2 } );
+                    
+                    for(let o of objectCar.children){
+                        o.material = materialCar
+                    }
+                    
+                    objectCar.position.set(0, 0, 0)
+                    objectCar.scale.set(0.3, 0.3, 0.3)
+                    objectCar.rotateY(-Math.PI/2)
+                    player = objectCar
+                    player.add(objectPerson)
+                    player.name = "player"
+                    scene.add(player)
+                })
+            })
+        })
+    })
 
     // add scene to html page
     canvas.appendChild(renderer.domElement)
@@ -180,22 +202,26 @@ export function displayScene(){
     let cameraControls = new OrbitControls(camera, renderer.domElement)
     cameraControls.addEventListener("change", function(){
         
-        //camera.lookAt(player.position) 
         renderer.render(scene, camera)
     })
     // limit the camera so it wont go "below" ground
-    //cameraControls.maxPolarAngle = Math.PI/2-.1
+    cameraControls.maxPolarAngle = Math.PI/2-.1
     cameraControls.maxDistance = 1000
 
-    camera.position.z = player.position.z 
-    camera.position.x = player.position.x -600
-    camera.position.y = player.position.y +600
+    camera.position.z = 0
+    camera.position.x = -600
+    camera.position.y = 600
     
     let ambientLight = new THREE.AmbientLight(0x333333)
     let directionalLight = new THREE.DirectionalLight(0x777777)
+    
+    let pointLight = new THREE.PointLight(0x888888)
+    pointLight.position.set(0, 1000, 0)
+    pointLight.intensity = 1
 
     scene.add(directionalLight)
     scene.add(ambientLight)
+    scene.add(pointLight)
 
     for(let obj of scene.children){
 
@@ -209,45 +235,21 @@ export function displayScene(){
 
     }
 
-    let walkSpeed = 5
-    let legRotation1 = 0.05
-    let legRotation2 = -0.05
-    let counter = 0
+    let driveSpeed = 10
     document.onkeydown = function(e) {
-        //console.log(e.keyCode)
         switch(e.keyCode){
             case 87: 
-                if (isNextMoveInsideIslandBoundary(player, island, islandRadius, walkSpeed)) {
-                    /*if (counter === 10) {
-                        legRotation1 = -legRotation1
-                        legRotation2 = -legRotation2
-                        counter = 0
-                    }
-                    counter++
-                    playerLeftLeg.rotateZ(legRotation1)
-                    playerRightLeg.rotateZ(legRotation2)*/
-                    player.translateX(walkSpeed)
-                    
+                if (isNextMoveInsideIslandBoundary(player, island, islandRadius, -driveSpeed) && !isObjectIntersecting(scene, camera, player)) {
+                    // move the player/car forward
+                    player.translateZ(-driveSpeed)
                     cameraControls.target.set(player.position.x, player.position.y, player.position.z);
-                    cameraControls.update();
                 } 
                 break
             case 83: 
-                if (isNextMoveInsideIslandBoundary(player, island, islandRadius, -walkSpeed)) {
-                    /*if (counter === 10) {
-                        legRotation1 = -legRotation1
-                        legRotation2 = -legRotation2
-                        counter = 0
-                    }
-                    counter++
-
-                    playerLeftLeg.rotateZ(legRotation2)
-                    playerRightLeg.rotateZ(legRotation1)*/
-                    player.translateX(-walkSpeed)
-
+                if (isNextMoveInsideIslandBoundary(player, island, islandRadius, driveSpeed)) {
+                    // move the player/car backwards
+                    player.translateZ(driveSpeed)
                     cameraControls.target.set(player.position.x, player.position.y, player.position.z);
-                    //camera.position.set(player.position.x -400, player.position.y +400, player.position.z);
-                    cameraControls.update();
                 } 
                 break
             case 65: 
@@ -260,12 +262,11 @@ export function displayScene(){
                 player.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), Math.PI/2)
                 break
         }
-        renderer.render(scene, camera) 
+        animate()
     }
 
     function animate(){
 
-        camera.lookAt(scene.position)
         renderer.render(scene, camera)
         cameraControls.update()
     }

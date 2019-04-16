@@ -12,8 +12,3 @@ newmtl Material__30
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka assets/treelogs/Log_02_D.tga
-	map_Kd assets/treelogs/Log_02_D.tga
-	map_Ks assets/treelogs/Log_02_S.tga
-	map_bump assets/treelogs/Log_02_N.tga
-	bump assets/treelogs/Log_02_N.tga

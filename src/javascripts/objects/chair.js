@@ -16,6 +16,7 @@ export function getChair(scene, renderer, camera){
         object.position.set(-150, 35, 250)
         object.rotateY(-3)
         object.scale.set(4, 3.5, 4)
+        object.name = "chair"
         scene.add(object)
         renderer.render(scene, camera)
     })

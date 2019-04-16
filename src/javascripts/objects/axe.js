@@ -20,6 +20,7 @@ export function getAxe(scene, renderer, camera){
             object.rotateX(-1.5)
             object.rotateY(-0.8)
             object.scale.set(3, 3, 3)
+            object.name = "axe"
             scene.add(object)
             renderer.render(scene, camera)
         })

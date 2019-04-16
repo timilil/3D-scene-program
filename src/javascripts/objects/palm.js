@@ -8,9 +8,6 @@ export function getPalm(scene, renderer, camera){
         material.preload()
         objLoader.setMaterials(material)
         objLoader.load("./assets/palm/Palm_01.obj", function(object){
-
-            //let texture = new THREE.TextureLoader().load( './assets/VL1X8_002.png' );
-            //let material = new THREE.MeshBasicMaterial( { map: texture } );
              
             for(let o of object.children){
                 let c = new THREE.Color()
@@ -18,29 +15,31 @@ export function getPalm(scene, renderer, camera){
                 o.material = new THREE.MeshPhongMaterial({
                     color: c
                 })
-                //o.material = material
             }
             
-            object.position.set(-300, 0, -300)
+            object.position.set(-200, 0, -300)
             object.scale.set(8, 8, 8)
+            object.name = "palm"
             scene.add(object)
             
             // generate n amount of objects inside a circle
-            /*let cx = 400;
-            let cz = 100;
+            let cx = -200;
+            let cz = -300;
             let radius = 100
-            let objectCount = 10
+            let objectCount = 6
             for (let i=0; i<objectCount; i++){
+                let clonedObj = object.clone()
                 
                 let angle = Math.random()*Math.PI*2;
                 
                 let x = cx + Math.cos(angle)*radius;
                 let z = cz+ Math.sin(angle)*radius;
                 
-                object.position.set(x,0,z)
-                object.scale.set(8, 8, 8)
-                scene.add(object)
-            }*/
+                clonedObj.position.set(x,0,z)
+                clonedObj.scale.set(8, 8, 8)
+                clonedObj.name = "palm"
+                scene.add(clonedObj)
+            }
             renderer.render(scene, camera)
         })
     })

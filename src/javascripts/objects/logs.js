@@ -18,6 +18,7 @@ export function getLogs(scene, renderer, camera){
             
             object.position.set(-600, 0, -100)
             object.scale.set(.5, 2, 2)
+            object.name = "logs"
             scene.add(object)
             renderer.render(scene, camera)
         })

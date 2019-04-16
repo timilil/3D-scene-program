@@ -16,6 +16,7 @@ export function getPerson(scene, renderer, camera){
         object.position.set(-130, 0, 180)
         object.rotateY(1.5)
         object.scale.set(3.3, 3.3, 3.3)
+        object.name = "person"
         scene.add(object)
         renderer.render(scene, camera)
     })

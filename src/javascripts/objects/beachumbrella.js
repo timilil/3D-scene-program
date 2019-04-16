@@ -19,6 +19,7 @@ export function getBeachUmbrella(scene, renderer, camera){
             object.position.set(-400, 0, 400)
             object.rotateX(-Math.PI/2)
             object.scale.set(1.5, 1.5, 1.5)
+            object.name = "beachumbrella"
             scene.add(object)
             renderer.render(scene, camera)
         })

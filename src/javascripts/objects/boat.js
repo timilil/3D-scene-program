@@ -34,6 +34,7 @@ export function getBoat(scene, renderer, camera){
             object.position.set(650, -10, 400)
             object.scale.set(40, 40, 40)
             object.rotateY(-2)
+            object.name = "boat"
             scene.add(object)
 
             renderer.render(scene, camera)

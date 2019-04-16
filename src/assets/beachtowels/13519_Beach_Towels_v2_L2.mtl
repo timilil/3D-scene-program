@@ -62,5 +62,5 @@ newmtl Beach_Towels_1
 	Ke 0.0000 0.0000 0.0000
 	map_Ka /assets/beachtowels/Beach_Towels_diffuse.jpg
 	map_Kd /assets/beachtowels/Beach_Towels_diffuse.jpg
-	map_bump /assets/beachtowels/Beach_Towels_bump.jpg
-	bump /assets/beachtowels/Beach_Towels_bump.jpg
+	map_bump /assets/beachtowels/Beach_Towels_bump_2.jpg
+	bump /assets/beachtowels/Beach_Towels_bump_2.jpg

@@ -26,10 +26,7 @@ export function getCampfire(scene, renderer, camera){
                 } else if (i === 5){
                     let texture = new THREE.TextureLoader().load( './assets/campfire/woodsground_diffuse.jpg' );
                     let material = new THREE.MeshBasicMaterial( { map: texture } );
-                    o.material = material/*new THREE.MeshPhongMaterial({
-                        color: c,
-                        side: THREE.DoubleSide
-                    })*/
+                    o.material = material
                 } else if (i === 6){
                     let texture = new THREE.TextureLoader().load( './images/rock1.jpg' );
                     let material = new THREE.MeshBasicMaterial( { map: texture } );
@@ -46,6 +43,7 @@ export function getCampfire(scene, renderer, camera){
             object.position.set(500, 0, -100)
             object.rotateY(-.5)
             object.scale.set(8, 8, 8)
+            object.name = "campfire"
             scene.add(object)
             renderer.render(scene, camera)
         })

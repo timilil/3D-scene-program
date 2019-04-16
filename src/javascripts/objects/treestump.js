@@ -15,6 +15,7 @@ export function getTreeStump(scene, renderer, camera){
         
         object.position.set(-600, 28, -200)
         object.scale.set(10, 10, 10)
+        object.name = "treestump"
         scene.add(object)
         renderer.render(scene, camera)
     })

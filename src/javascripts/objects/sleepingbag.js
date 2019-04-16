@@ -19,6 +19,7 @@ export function getSleepingBag(scene, renderer, camera){
             object.position.set(100, 0, 400)
             object.rotateX(-Math.PI/2)
             object.scale.set(1, 1, 1)
+            object.name = "sleepingbag"
             scene.add(object)
             renderer.render(scene, camera)
         })
