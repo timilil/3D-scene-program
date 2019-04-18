@@ -21,6 +21,8 @@ import {getTable} from './objects/table'
 import {getDrone} from './objects/drone'
 import {getGrass} from './objects/grass'
 import {getDog} from './objects/dog'
+import {getFruits} from './objects/fruits'
+import {getBackpack} from './objects/backpack'
 
 // check that the movable object is inside the island boundary
 function isNextMoveInsideIslandBoundary(player, island, islandRadius, nextMove){
@@ -116,7 +118,9 @@ export function displayScene(){
     scene.add(water)
 
     // sky
-    geometry = new THREE.SphereGeometry(5000, 25, 25, 0, 2*Math.PI, 0, 0.5 * Math.PI,)
+    // we don't need a full sphere because the other half won't be seen anyway
+    // --> make it a half sphere 
+    geometry = new THREE.SphereGeometry(5000, 25, 25, 0, 2 * Math.PI, 0, 0.5 * Math.PI)
     let sky = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial())
     sky.material.side = THREE.BackSide;
     sky.name = "sky"
@@ -150,6 +154,8 @@ export function displayScene(){
     getDrone(scene, renderer, camera)
     getGrass(scene, renderer, camera)
     getDog(scene, renderer, camera)
+    getFruits(scene, renderer, camera)
+    getBackpack(scene, renderer, camera)
 
     let mtlLoader = new MTLLoader()
     let objLoader = new OBJLoader()
@@ -212,6 +218,7 @@ export function displayScene(){
     camera.position.x = -600
     camera.position.y = 600
     
+    // lightings
     let ambientLight = new THREE.AmbientLight(0x333333)
     let directionalLight = new THREE.DirectionalLight(0x777777)
     
